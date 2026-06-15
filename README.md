@@ -37,6 +37,10 @@ npm run build && npm start
 - Tailwind CSS
 - Deployed on Vercel
 
+## Production URL
+
+**https://moudashboard.vercel.app** — deployed from `mou_dashboard` submodule.
+
 ## What Mou does NOT do
 
 This dashboard is **read-only**. It does not modify any government record,
