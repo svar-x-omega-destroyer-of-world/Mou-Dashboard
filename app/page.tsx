@@ -22,6 +22,7 @@ interface Cluster {
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 const ROOT_CAUSE_LABELS: Record<string, string> = {
+  no_issues: "Documents Consistent",
   name_mismatch: "Name Mismatch",
   dob_mismatch: "DOB Mismatch",
   seeding_gap: "Aadhaar Seeding Gap",
@@ -31,6 +32,7 @@ const ROOT_CAUSE_LABELS: Record<string, string> = {
 };
 
 const ROOT_CAUSE_DESCRIPTIONS: Record<string, string> = {
+  no_issues: "No document mismatch detected — not a systemic defect.",
   name_mismatch:
     "Name spelled differently across Aadhaar vs ration card — the flagship case.",
   dob_mismatch: "Date of birth differs across the two documents.",
@@ -59,7 +61,12 @@ export default function Dashboard() {
     setLoading(true);
     setError(null);
     try {
-      const params = filterConf === "all" ? "" : `?min_confidence=${filterConf}`;
+      // The backend defaults to min_confidence=medium, so "All" must be sent
+      // explicitly as "low" (low-and-above = everything).
+      const params =
+        filterConf === "all"
+          ? "?min_confidence=low"
+          : `?min_confidence=${filterConf}`;
       const res = await fetch(`${API_BASE}/clusters${params}`, {
         cache: "no-store",
       });
@@ -211,7 +218,7 @@ export default function Dashboard() {
                         {cluster.beneficiaries_affected}
                       </div>
                       <div className="text-xs text-zinc-400">
-                        beneficiary
+                        beneficiar
                         {cluster.beneficiaries_affected !== 1 ? "ies" : "y"}
                       </div>
                     </div>
