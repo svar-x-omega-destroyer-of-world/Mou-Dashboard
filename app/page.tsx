@@ -21,6 +21,12 @@ interface Cluster {
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+// The deployed event store currently holds seeded synthetic events, not real
+// citizen diagnoses. Say so on-screen — judges/officials must never mistake
+// simulation for field data. Set NEXT_PUBLIC_DATA_BADGE=off once real events
+// accumulate on persistent storage.
+const SHOW_SIMULATED_BADGE = process.env.NEXT_PUBLIC_DATA_BADGE !== "off";
+
 const ROOT_CAUSE_LABELS: Record<string, string> = {
   no_issues: "Documents Consistent",
   name_mismatch: "Name Mismatch",
@@ -103,9 +109,19 @@ export default function Dashboard() {
               Systemic defect clusters ranked by beneficiaries affected
             </p>
           </div>
-          <span className="rounded-full bg-zinc-100 px-3 py-1 text-sm font-medium text-zinc-600">
-            {loading ? "…" : `${clusters.length} cluster${clusters.length !== 1 ? "s" : ""}`}
-          </span>
+          <div className="flex items-center gap-2">
+            {SHOW_SIMULATED_BADGE && (
+              <span
+                className="rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-200"
+                title="Clusters below are seeded from a synthetic pilot simulation, not live citizen diagnoses."
+              >
+                Simulated pilot data
+              </span>
+            )}
+            <span className="rounded-full bg-zinc-100 px-3 py-1 text-sm font-medium text-zinc-600">
+              {loading ? "…" : `${clusters.length} cluster${clusters.length !== 1 ? "s" : ""}`}
+            </span>
+          </div>
         </div>
       </header>
 
